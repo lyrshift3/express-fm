@@ -2,9 +2,14 @@ import { log } from 'console'
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import swaggerUi from 'swagger-ui-express'
 import { swaggerSpec } from './swagger.js'
 import router from './router/index.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 const app = express()
 
@@ -19,6 +24,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 app.use(express.json()) // 解析 JSON 请求体
 app.use(cors()) // 允许跨域请求
 app.use(morgan('dev'))
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 app.use('/api/v1', router)   //例：http://localhost:3000/api/v1/user/
 // app.use((req, res) => {
 //     res.status(404).json({ err: '接口不存在' })

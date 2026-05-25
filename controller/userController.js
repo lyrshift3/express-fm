@@ -41,7 +41,7 @@ export const addUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        const user = await User.findByIdAndUpdate(req.user.id, req.body, { new: true, runValidators: true })
         if (!user) {
             return res.status(404).json({ err: '用户不存在' })
         }

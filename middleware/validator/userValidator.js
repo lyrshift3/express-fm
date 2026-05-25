@@ -1,4 +1,5 @@
 import { body } from 'express-validator'
+import { User } from '../../model/index.js'
 
 const baseUserValidation = [
     body('username').notEmpty().withMessage('用户名不能为空').bail().isLength({ min: 3 }).withMessage('用户名长度不能少于3个字符'),
@@ -18,9 +19,17 @@ export const addUserValidator = [
 
 export const updateUserValidator = [
     body('username').optional().isLength({ min: 3 }).withMessage('用户名长度不能少于3个字符'),
-    body('email').optional().isEmail().withMessage('邮箱格式不正确'),
+    body('email').optional().isEmail().withMessage('邮箱格式不正确').bail()
+        .custom(async (email, { req }) => {
+            const existingUser = await User.findOne({ email, _id: { $ne: req.user.id } })
+            if (existingUser) throw new Error('邮箱已被其他用户使用')
+        }),
     body('password').optional().isLength({ min: 6 }).withMessage('密码长度不能少于6个字符'),
-    body('phone').optional().matches(/^1[3-9]\d{9}$/).withMessage('手机号格式不正确'),
+    body('phone').optional().matches(/^1[3-9]\d{9}$/).withMessage('手机号格式不正确').bail()
+        .custom(async (phone, { req }) => {
+            const existingUser = await User.findOne({ phone, _id: { $ne: req.user.id } })
+            if (existingUser) throw new Error('手机号已被其他用户使用')
+        }),
 ]
 
 export const loginValidator = [

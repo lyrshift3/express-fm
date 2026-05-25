@@ -11,10 +11,10 @@ router.post('/register', validate(registerValidator), register)
 router.post('/login', validate(loginValidator), login)
 
 // 需要登录认证的接口
-router.get('/', authMiddleware, getUsers)
+router.get('/lists', authMiddleware, getUsers)
 router.get('/:id', authMiddleware, getUser)
 router.post('/', authMiddleware, validate(addUserValidator), addUser)
-router.put('/:id', authMiddleware, validate(updateUserValidator), updateUser)
+router.put('/', authMiddleware, validate(updateUserValidator), updateUser)
 router.delete('/:id', authMiddleware, deleteUser)
 
 export default router
